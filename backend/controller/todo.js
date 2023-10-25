@@ -10,6 +10,18 @@ exports.postTodo = async (req, res) => {
         console.log(err)
         return
     }
-
     res.status(201).send({ message: 'Succefully Created Todo List', payload: response });
+}
+
+
+exports.getList = async (req, res) => {
+    let response;
+    try {
+        response = await getAllTodo();
+    }
+    catch (err) {
+        console.log(err)
+        return
+    }
+    res.status(200).send({ payload: response });
 }
