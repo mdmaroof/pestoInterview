@@ -1,7 +1,15 @@
+import { useState } from "react";
+import { Header } from "./component/header";
+import { Modal } from "./component/modal";
+import { TodoSection } from "./component/todo.section";
+
 function App() {
+  const [openModal, setOpenModal] = useState(false);
   return (
     <>
-      <h1 className="text-3xl font-bold">Hello world!</h1>
+      <Modal openModal={openModal} closeModal={() => setOpenModal(false)} />
+      <Header openModal={() => setOpenModal(true)} />
+      <TodoSection />
     </>
   );
 }
