@@ -39,7 +39,14 @@ const TodoBlock = ({
 
 export function TodoSection() {
   return (
-    <div className="grid grid-cols-4 gap-4 m-4">
+    <div className="grid grid-cols-1 md:grid-cols-4 gap-4 m-4 relative top-20 pb-20 md:pb-0">
+      <TodoBlock />
+      <TodoBlock />
+      <TodoBlock />
+      <TodoBlock />
+      <TodoBlock />
+      <TodoBlock />
+      <TodoBlock />
       <TodoBlock />
     </div>
   );

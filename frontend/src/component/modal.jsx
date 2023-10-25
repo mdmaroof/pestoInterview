@@ -4,13 +4,13 @@ export function Modal({ openModal, closeModal }) {
       {openModal && (
         <div
           onClick={closeModal}
-          className="fixed grid place-items-center top-0 left-0 bg-modalBackground w-full h-full z-10"
+          className="fixed grid place-items-center top-0 left-0 bg-modalBackground w-full h-full z-20"
         >
           <div
             onClick={(e) => {
               e.stopPropagation();
             }}
-            className="bg-white w-[50%] rounded p-5"
+            className="bg-white w-[90%] md:w-[50%] rounded p-3"
           >
             <div className="flex flex-row items-center border-b pb-4">
               <div className="text-3xl flex-1">Add Todo List</div>
