@@ -1,4 +1,5 @@
 const express = require('express');
+const cors = require('cors')
 const bodyParser = require('body-parser');
 
 const router = require('./routes');
@@ -7,6 +8,10 @@ const app = express();
 const mongodbCore = require('./server/mongo');
 
 mongodbCore.initialize();
+
+app.use(cors({
+    origin: 'http://localhost:3000'
+}))
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
