@@ -1,4 +1,5 @@
 import { useState, useContext, useEffect } from "react";
+import { toast } from "react-toastify";
 import axios from "axios";
 import { TodoContext } from "../context/todoContext";
 
@@ -30,6 +31,7 @@ const TodoBlock = ({
   };
 
   const updateTodo = async (id) => {
+    const toastId = toast.loading("Updating Todo status ...");
     const payload = { status: statusSelected };
     const response = await axios.put(
       `http://localhost:5000/todo/${id}`,
@@ -47,6 +49,16 @@ const TodoBlock = ({
         ];
         return newArray;
       });
+
+      setTimeout(() => {
+        toast.update(toastId, {
+          render: "Updated Todo Status",
+          type: "success",
+          isLoading: false,
+          autoClose: 5000
+        });
+      }, 1000);
+
       setEditMode(false);
     }
   };
@@ -124,7 +136,7 @@ const TodoBlock = ({
 
 export function TodoSection() {
   const context = useContext(TodoContext);
-  const { todoList, setTodoList, setLoading } = context;
+  const { todoList, setTodoList, setLoading, loading } = context;
 
   useEffect(() => {
     setLoading(true);
@@ -138,18 +150,23 @@ export function TodoSection() {
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 m-4 relative top-20 pb-20 md:pb-0">
-      {todoList.map((z) => {
-        return (
-          <TodoBlock
-            key={z._id}
-            id={z._id}
-            title={z.title}
-            description={z.description}
-            status={z.status}
-            setTodoList={setTodoList}
-          />
-        );
-      })}
+      {!loading && todoList.length === 0 && <div>No Data</div>}
+      {todoList.length === 0 && loading && <div>Loading...</div>}
+      {todoList.length > 0 &&
+        todoList.map((z) => {
+          return (
+            <TodoBlock
+              key={z._id}
+              id={z._id}
+              title={z.title}
+              description={z.description}
+              status={z.status}
+              setTodoList={setTodoList}
+              loading={loading}
+              setLoading={setLoading}
+            />
+          );
+        })}
     </div>
   );
 }
