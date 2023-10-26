@@ -189,14 +189,28 @@ export function TodoSection() {
   const context = useContext(TodoContext);
   const { todoList, setTodoList, setLoading, loading } = context;
 
-  useEffect(() => {
+  const callApi = async () => {
     setLoading(true);
-    axios.get("http://localhost:5000/todo").then((res) => {
+    try {
+      const res = await axios.get("http://localhost:5000/todo");
       if (res.status >= 200 && res.status < 300) {
         setTodoList(res.data.payload);
+      } else {
+        toast.error("Server Error!", {
+          autoClose: 5000,
+        });
       }
+    } catch (err) {
+      toast.error("Server Error!", {
+        autoClose: 5000,
+      });
+    } finally {
       setLoading(false);
-    });
+    }
+  };
+
+  useEffect(() => {
+    callApi();
   }, []);
 
   return (
