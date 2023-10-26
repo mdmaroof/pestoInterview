@@ -32,28 +32,50 @@ export function Modal({ openModal, closeModal }) {
     }
 
     const payload = {
-      title,
+      title: title,
       description,
       status,
     };
 
     setLoading(true);
-    const res = await axios.post("http://localhost:5000/todo", payload);
-    if (res.status >= 200 && res.status < 300) {
-      const { response } = res.data;
-      setTodoList((prev) => [...prev, response]);
-      setTitle("");
-      setDescription("");
-      setStatus("");
+    try {
+      const res = await axios.post("http://localhost:5000/todo", payload);
+      if (res.status >= 200 && res.status < 300) {
+        const { response } = res.data;
+        setTodoList((prev) => [...prev, response]);
+        setTitle("");
+        setDescription("");
+        setStatus("");
 
+        setTimeout(() => {
+          toast.update(toastId, {
+            render: "Succefully Added Todo",
+            type: "success",
+            isLoading: false,
+            autoClose: 5000,
+          });
+          setLoading(false);
+        }, 1000);
+      } else {
+        setTimeout(() => {
+          toast.update(toastId, {
+            render: "something Went Wrong Please try again later!",
+            type: "error",
+            isLoading: false,
+            autoClose: 5000,
+          });
+          closeModal();
+          setLoading(false);
+        }, 1000);
+      }
+    } catch (err) {
       setTimeout(() => {
         toast.update(toastId, {
-          render: "Succefully Added Todo",
-          type: "success",
+          render: "Server Error!",
+          type: "error",
           isLoading: false,
           autoClose: 5000,
         });
-        closeModal();
         setLoading(false);
       }, 1000);
     }
