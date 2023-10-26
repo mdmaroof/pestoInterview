@@ -1,4 +1,5 @@
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
+import axios from "axios";
 import { TodoContext } from "../context/todoContext";
 
 const STATUS = {
@@ -78,8 +79,21 @@ const TodoBlock = ({
 };
 
 export function TodoSection() {
-  const data = useContext(TodoContext);
-  // console.log(data);
+  const context = useContext(TodoContext);
+  const { setTodoList, setLoading } = context;
+
+  console.log(context);
+
+  useEffect(() => {
+    setLoading(true);
+    axios.get("http://localhost:5000/todo").then((res) => {
+      if (res.status >= 200 && res.status < 300) {
+        setTodoList(res.data.payload);
+      }
+      setLoading(false);
+    });
+  }, []);
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 m-4 relative top-20 pb-20 md:pb-0">
       <TodoBlock />

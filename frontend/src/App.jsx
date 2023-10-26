@@ -1,5 +1,4 @@
-import { useEffect, useState } from "react";
-import axios from "axios";
+import { useState } from "react";
 import { Header } from "./component/header";
 import { Modal } from "./component/modal";
 import { TodoSection } from "./component/todo.section";
@@ -7,10 +6,6 @@ import { TodoProvider } from "./context/todoContext";
 
 function App() {
   const [openModal, setOpenModal] = useState(false);
-
-  useEffect(() => {
-    axios.get("http://localhost:5000/todo");
-  });
 
   return (
     <>
