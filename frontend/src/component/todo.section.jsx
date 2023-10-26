@@ -21,18 +21,38 @@ const TodoBlock = ({
 
   const deleteTodo = async (id) => {
     const toastId = toast.loading("Deleting Todo ...");
-    const response = await axios.delete(`http://localhost:5000/todo/${id}`);
-    if (response.status >= 200 && response.status < 300) {
+    try {
+      const response = await axios.delete(`http://localhost:5000/todo/${id}`);
+      if (response.status >= 200 && response.status < 300) {
+        setTimeout(() => {
+          toast.update(toastId, {
+            render: "Deleted Todo",
+            type: "success",
+            isLoading: false,
+            autoClose: 5000,
+          });
+          setTodoList((prev) => {
+            const removeData = prev.filter((x) => x._id !== id);
+            return removeData;
+          });
+        }, 1000);
+      } else {
+        setTimeout(() => {
+          toast.update(toastId, {
+            render: "Unable to Delete Todo",
+            type: "success",
+            isLoading: false,
+            autoClose: 5000,
+          });
+        }, 1000);
+      }
+    } catch (err) {
       setTimeout(() => {
         toast.update(toastId, {
-          render: "Deleted Todo",
+          render: "Server Error",
           type: "success",
           isLoading: false,
           autoClose: 5000,
-        });
-        setTodoList((prev) => {
-          const removeData = prev.filter((x) => x._id !== id);
-          return removeData;
         });
       }, 1000);
     }
@@ -40,34 +60,57 @@ const TodoBlock = ({
 
   const updateTodo = async (id) => {
     const toastId = toast.loading("Updating Todo status ...");
-    const payload = { status: statusSelected };
-    const response = await axios.put(
-      `http://localhost:5000/todo/${id}`,
-      payload
-    );
+    try {
+      const payload = { status: statusSelected };
+      const response = await axios.put(
+        `http://localhost:5000/todo/${id}`,
+        payload
+      );
 
-    if (response.status >= 200 && response.status < 300) {
-      setTodoList((prev) => {
-        const findIndex = prev.findIndex((z) => z._id === id);
-        const changeIndexData = { ...prev[findIndex], status: statusSelected };
-        const newArray = [
-          ...prev.slice(0, findIndex),
-          changeIndexData,
-          ...prev.slice(findIndex + 1),
-        ];
-        return newArray;
-      });
+      if (response.status >= 200 && response.status < 300) {
+        setTodoList((prev) => {
+          const findIndex = prev.findIndex((z) => z._id === id);
+          const changeIndexData = {
+            ...prev[findIndex],
+            status: statusSelected,
+          };
+          const newArray = [
+            ...prev.slice(0, findIndex),
+            changeIndexData,
+            ...prev.slice(findIndex + 1),
+          ];
+          return newArray;
+        });
 
+        setTimeout(() => {
+          toast.update(toastId, {
+            render: "Updated Todo Status",
+            type: "success",
+            isLoading: false,
+            autoClose: 5000,
+          });
+        }, 1000);
+
+        setEditMode(false);
+      } else {
+        setTimeout(() => {
+          toast.update(toastId, {
+            render: "Unable to update Todo Status",
+            type: "error",
+            isLoading: false,
+            autoClose: 5000,
+          });
+        }, 1000);
+      }
+    } catch (err) {
       setTimeout(() => {
         toast.update(toastId, {
-          render: "Updated Todo Status",
-          type: "success",
+          render: "Server Error!",
+          type: "error",
           isLoading: false,
           autoClose: 5000,
         });
       }, 1000);
-
-      setEditMode(false);
     }
   };
 
