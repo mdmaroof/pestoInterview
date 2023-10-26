@@ -16,6 +16,7 @@ export const TodoProvider = ({ children }) => {
         setTodoList,
         setLoading,
         setStatus,
+        status,
       }}
     >
       {children}
