@@ -22,7 +22,7 @@ exports.postTodo = async (req, res) => {
         console.log(err)
         return
     }
-    res.status(201).send({ message: 'Succefully Created Todo List' });
+    res.status(201).send({ message: 'Succefully Created Todo List', response });
 }
 
 exports.deleteTodo = async (req, res) => {

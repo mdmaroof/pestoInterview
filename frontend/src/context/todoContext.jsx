@@ -4,9 +4,19 @@ export const TodoContext = createContext();
 export const TodoProvider = ({ children }) => {
   const [todoList, setTodoList] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [status, setStatus] = useState("");
+
+  const filterList =
+    (status && todoList.filter((z) => z.status === status)) || todoList;
   return (
     <TodoContext.Provider
-      value={{ todoList, loading, setTodoList, setLoading }}
+      value={{
+        todoList: filterList,
+        loading,
+        setTodoList,
+        setLoading,
+        setStatus,
+      }}
     >
       {children}
     </TodoContext.Provider>

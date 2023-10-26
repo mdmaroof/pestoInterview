@@ -12,8 +12,22 @@ const TodoBlock = ({
   title = "Title",
   description = "Description",
   status = "in_progress",
+  id,
+  setTodoList,
 }) => {
   const [editMode, setEditMode] = useState(false);
+
+  const deleteTodo = async (id) => {
+    const response = await axios.delete(`http://localhost:5000/todo/${id}`);
+    // console.log(response);
+    if (response.status >= 200 && response.status < 300) {
+      setTodoList((prev) => {
+        const removeData = prev.filter((x) => x._id !== id);
+        return removeData;
+      });
+    }
+  };
+
   return (
     <div className="h-40 border border-solid w-full rounded p-4 flex flex-col">
       <div className="flex-1">
@@ -51,7 +65,10 @@ const TodoBlock = ({
               Edit
             </div>
 
-            <div className="bg-red-500 hover:bg-red-600 text-white duration-100 rounded px-4 py-1 cursor-pointer">
+            <div
+              onClick={() => deleteTodo(id)}
+              className="bg-red-500 hover:bg-red-600 text-white duration-100 rounded px-4 py-1 cursor-pointer"
+            >
               Delete
             </div>
           </>
@@ -80,9 +97,7 @@ const TodoBlock = ({
 
 export function TodoSection() {
   const context = useContext(TodoContext);
-  const { setTodoList, setLoading } = context;
-
-  console.log(context);
+  const { todoList, setTodoList, setLoading } = context;
 
   useEffect(() => {
     setLoading(true);
@@ -96,14 +111,18 @@ export function TodoSection() {
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 m-4 relative top-20 pb-20 md:pb-0">
-      <TodoBlock />
-      <TodoBlock />
-      <TodoBlock />
-      <TodoBlock />
-      <TodoBlock />
-      <TodoBlock />
-      <TodoBlock />
-      <TodoBlock />
+      {todoList.map((z) => {
+        return (
+          <TodoBlock
+            key={z._id}
+            id={z._id}
+            title={z.title}
+            description={z.description}
+            status={z.status}
+            setTodoList={setTodoList}
+          />
+        );
+      })}
     </div>
   );
 }
