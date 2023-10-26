@@ -1,6 +1,7 @@
 import { useContext, useState } from "react";
 import { TodoContext } from "../context/todoContext";
 import axios from "axios";
+import { toast } from "react-toastify";
 
 export function Modal({ openModal, closeModal }) {
   const context = useContext(TodoContext);
@@ -12,16 +13,21 @@ export function Modal({ openModal, closeModal }) {
 
   const submitData = async () => {
     if (loading) return;
-    if (!title) {
-      alert("Title Required");
-      return;
-    }
-    if (!description) {
-      alert("Description Required");
-      return;
-    }
-    if (!status) {
-      alert("Status Required");
+    const toastId = toast.loading("Adding Todo ...");
+    let errorMessage = "";
+    if (!title) errorMessage = errorMessage || "Title Required";
+    if (!description) errorMessage = errorMessage || "Description Required";
+    if (!status) errorMessage = errorMessage || "Status Required";
+
+    if (errorMessage) {
+      setTimeout(() => {
+        toast.update(toastId, {
+          render: errorMessage,
+          type: "error",
+          isLoading: false,
+          autoClose: 5000,
+        });
+      }, 1000);
       return;
     }
 
@@ -39,9 +45,18 @@ export function Modal({ openModal, closeModal }) {
       setTitle("");
       setDescription("");
       setStatus("");
-      closeModal();
+
+      setTimeout(() => {
+        toast.update(toastId, {
+          render: "Succefully Added Todo",
+          type: "success",
+          isLoading: false,
+          autoClose: 5000,
+        });
+        closeModal();
+        setLoading(false);
+      }, 1000);
     }
-    setLoading(false);
   };
 
   return (

@@ -20,13 +20,21 @@ const TodoBlock = ({
   const [statusSelected, setStatusSelected] = useState(status);
 
   const deleteTodo = async (id) => {
+    const toastId = toast.loading("Deleting Todo ...");
     const response = await axios.delete(`http://localhost:5000/todo/${id}`);
-    // console.log(response);
     if (response.status >= 200 && response.status < 300) {
-      setTodoList((prev) => {
-        const removeData = prev.filter((x) => x._id !== id);
-        return removeData;
-      });
+      setTimeout(() => {
+        toast.update(toastId, {
+          render: "Deleted Todo",
+          type: "success",
+          isLoading: false,
+          autoClose: 5000,
+        });
+        setTodoList((prev) => {
+          const removeData = prev.filter((x) => x._id !== id);
+          return removeData;
+        });
+      }, 1000);
     }
   };
 
@@ -55,7 +63,7 @@ const TodoBlock = ({
           render: "Updated Todo Status",
           type: "success",
           isLoading: false,
-          autoClose: 5000
+          autoClose: 5000,
         });
       }, 1000);
 
