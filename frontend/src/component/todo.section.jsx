@@ -16,6 +16,7 @@ const TodoBlock = ({
   setTodoList,
 }) => {
   const [editMode, setEditMode] = useState(false);
+  const [statusSelected, setStatusSelected] = useState(status);
 
   const deleteTodo = async (id) => {
     const response = await axios.delete(`http://localhost:5000/todo/${id}`);
@@ -25,6 +26,28 @@ const TodoBlock = ({
         const removeData = prev.filter((x) => x._id !== id);
         return removeData;
       });
+    }
+  };
+
+  const updateTodo = async (id) => {
+    const payload = { status: statusSelected };
+    const response = await axios.put(
+      `http://localhost:5000/todo/${id}`,
+      payload
+    );
+
+    if (response.status >= 200 && response.status < 300) {
+      setTodoList((prev) => {
+        const findIndex = prev.findIndex((z) => z._id === id);
+        const changeIndexData = { ...prev[findIndex], status: statusSelected };
+        const newArray = [
+          ...prev.slice(0, findIndex),
+          changeIndexData,
+          ...prev.slice(findIndex + 1),
+        ];
+        return newArray;
+      });
+      setEditMode(false);
     }
   };
 
@@ -45,7 +68,11 @@ const TodoBlock = ({
           )}
           {editMode && (
             <div>
-              <select className="border">
+              <select
+                onChange={(e) => setStatusSelected(e.target.value)}
+                className="border"
+                value={statusSelected}
+              >
                 <option value="to_do">To Do</option>
                 <option value="in_progress">In Progress</option>
                 <option value="done">Done</option>
@@ -77,7 +104,7 @@ const TodoBlock = ({
         {editMode && (
           <>
             <div
-              onClick={() => setEditMode(false)}
+              onClick={() => updateTodo(id)}
               className="bg-green-500 hover:bg-green-600 text-white duration-100 rounded px-4 py-1 cursor-pointer"
             >
               Save
